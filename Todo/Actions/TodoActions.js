@@ -15,4 +15,12 @@ function createTodo(text){
   });
 }
 
+function removeTodo(todo) {
+  AppDispatcher.dispatch({
+    actionType: 'REMOVE_TODO',
+    todo: todo
+  });
+}
+
 exports.createTodo = createTodo;
+exports.removeTodo = removeTodo;

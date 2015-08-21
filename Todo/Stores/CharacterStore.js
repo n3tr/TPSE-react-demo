@@ -5,27 +5,22 @@ var assign = require('object-assign');
 var CHANGE_EVENT = 'change';
 
 
-var _histories = [];
+var _currentCount = 0;
 
-function addCreateHistory(todo) {
+function onAddTodo(todo) {
   // Do it in immutable
-  var history = "ADD: " + todo.text;
-  _histories = _histories.concat(history);
+
+  _currentCount += todo.text.length;
 }
 
-function addRemoveHistory(todo) {
-  var history = "REMOVE: " + todo.text;
-  _histories = _histories.concat(history);
-}
-
-var HistoryStore = assign({}, EventEmitter.prototype, {
+var CharacterStore = assign({}, EventEmitter.prototype, {
 
   /**
    * Get the entire collection of TODOs.
    * @return {object}
    */
-  getAll: function() {
-    return _histories;
+  getCount: function() {
+    return _currentCount;
   },
 
   // Listener Function
@@ -43,20 +38,13 @@ var HistoryStore = assign({}, EventEmitter.prototype, {
 });
 
 AppDispatcher.register(function(action) {
-  var todo;
+
   switch(action.actionType) {
     case 'CREATE_TODO':
-      todo = action.todo;
+      var todo = action.todo;
       if (todo) {
-        addCreateHistory(todo);
-        HistoryStore.emitChange();
-      }
-      break;
-    case 'REMOVE_TODO':
-      todo = action.todo;
-      if (todo) {
-        addRemoveHistory(todo);
-        HistoryStore.emitChange();
+        onAddTodo(todo);
+        CharacterStore.emitChange();
       }
       break;
 
@@ -65,4 +53,4 @@ AppDispatcher.register(function(action) {
   }
 });
 
-module.exports = HistoryStore;
+module.exports = CharacterStore;
